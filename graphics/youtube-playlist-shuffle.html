@@ -1,92 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>YouTube Shuffle!</title>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      body,
-      html {
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-    <script type="module">
-      import(
-        '/bundles/file-watcher/public/file-watcher.mjs'
-      ).then(({ default: reload }) => reload(nodecg));
-    </script>
-  </head>
-  <body>
-    <div id="player"></div>
-    <script>
-      /* Copied from https://codepen.io/nirhere/pen/KVpQVq */
 
-      /* Replace This Code - get Value from playlist page and place it here */
-      const urlParams = new URLSearchParams(window.location.search);
-      var playlistId =
-        urlParams.get('list') || 'PLDUwhtLxLHMBrQgt3S56GDCtwEbZ57RBe';
-      var tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
+<head>
+  <title>YouTube Shuffle!</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script type="module">
+    import(
+      '/bundles/file-watcher/public/file-watcher.mjs'
+    ).then(({ default: reload }) => reload(nodecg));
+  </script>
+  <script type="module" src="./youtube-playlist-shuffle.mjs"></script>
+</head>
 
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+<body>
+  <div id="player"></div>
+  <script>
+    var tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    function onYouTubeIframeAPIReady() {
+      window.main();
+      window.addEventListener("pagehide", (event) => {
+        console.log("UNLOAD");
+        window.unload();
+      });
+    }
 
-      var player;
+  </script>
+</body>
 
-      function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-          playerVars: { autoplay: 1, controls: 0 },
-          width: urlParams.get('width') || '640',
-          height: urlParams.get('height') || '480',
-          events: {
-            onReady: onPlayerReady,
-            onStateChange: onPlayerStateChange,
-          },
-        });
-      }
-
-      var playlistArray;
-      var playListArrayLength;
-      var maxNumber;
-
-      var oldNumber = 0;
-      var NewNumber = 0;
-
-      function newRandomNumber() {
-        oldNumber = NewNumber;
-        NewNumber = Math.floor(Math.random() * maxNumber);
-        if (NewNumber == oldNumber) {
-          newRandomNumber();
-        } else {
-          return NewNumber;
-        }
-      }
-
-      function onPlayerReady(event) {
-        player.loadPlaylist({
-          listType: 'playlist',
-          list: playlistId,
-        });
-      }
-
-      var firstLoad = true;
-      function onPlayerStateChange(event) {
-        console.log(event.data);
-        if (event.data == YT.PlayerState.ENDED) {
-          player.playVideoAt(newRandomNumber());
-        } else {
-          if (firstLoad && event.data == YT.PlayerState.PLAYING) {
-            firstLoad = false;
-            playlistArray = player.getPlaylist();
-            playListArrayLength = playlistArray.length;
-            maxNumber = playListArrayLength;
-            NewNumber = newRandomNumber();
-            player.playVideoAt(newRandomNumber());
-          }
-        }
-      }
-    </script>
-  </body>
 </html>

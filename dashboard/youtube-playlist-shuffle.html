@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-  </head>
-  <body>
-    <p>Butts.</p>
 
-    <script type="module">
-      import(
-        '/bundles/file-watcher/public/file-watcher.mjs'
-      ).then(({ default: reload }) => reload(nodecg));
+<head>
+  <meta charset="UTF-8" />
+  <script type="module">
+    import(
+      '/bundles/file-watcher/public/file-watcher.mjs'
+    ).then(({ default: reload }) => reload(nodecg));  
+  </script>
+  <script type="module" src="./youtube-playlist-shuffle.mjs"></script>
+</head>
 
-    </script>
-  </body>
+<body>
+  <div id="player-controls"></div>
+</body>
+
 </html>
