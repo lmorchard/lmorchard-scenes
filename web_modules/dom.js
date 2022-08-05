@@ -78,17 +78,7 @@ export class BaseElement extends HTMLElement {
 
     this._props = {};
     for (let propertyName of this.constructor.observedProperties) {
-      Object.defineProperty(self, propertyName, {
-        get: function () {
-          return self._props[propertyName];
-        },
-        set: function (newValue) {
-          const oldValue = self._props[propertyName];
-          self._props[propertyName] = newValue;
-          self.propChanged(propertyName, newValue, oldValue);
-          self.scheduleRender();
-        }
-      });
+      this.constructor.defineObservedProperty(self, propertyName);
     }
 
     this._renderScheduled = false;
@@ -96,6 +86,31 @@ export class BaseElement extends HTMLElement {
       this.template().content.cloneNode(true)
     );
   }
+
+  static defineObservedProperty(self, propertyName) {
+    Object.defineProperty(self, propertyName, {
+      get: function () {
+        return self._props[propertyName];
+      },
+      set: function (newValue) {
+        const oldValue = self._props[propertyName];
+        if (newValue === oldValue) return;
+        self._props[propertyName] = newValue;
+        self.propChanged(propertyName, newValue, oldValue);
+        let handler;
+        if ("propHandlers" in this) {
+          handler = self.propHandlers[propertyName];
+        }
+        if (!handler) {
+          handler = self[`propChanged_${propertyName}`];
+        }
+        if (typeof handler === "function") {
+          handler.call(self, newValue, oldValue);
+        }
+        self.scheduleRender();
+      }
+    });
+  } 
 
   scheduleRender() {
     if (this._renderScheduled) return;

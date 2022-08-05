@@ -12,46 +12,47 @@ const PING_INTERVAL = 5000;
 
 function main() {
   urlParams = new URLSearchParams(window.location.search);
-  playlistId = urlParams.get('list') || 'PLDUwhtLxLHMBrQgt3S56GDCtwEbZ57RBe';
   uid = urlParams.get("uid") || genuid();
+  playlistId = urlParams.get('list') || 'PLDUwhtLxLHMBrQgt3S56GDCtwEbZ57RBe';
 
+  setupPlayer(playlistId);
+
+  const onlyThisPlayer = (cb) => (data) => {
+    if (player && data.uid === uid) return cb(data);
+  }
+  nodecg.listenFor("ytshuffle.play", onlyThisPlayer(() => player.playVideo()));
+  nodecg.listenFor("ytshuffle.pause", onlyThisPlayer(() => player.pauseVideo()));
+  nodecg.listenFor("ytshuffle.next", onlyThisPlayer(() => player.nextVideo()));
+  nodecg.listenFor("ytshuffle.random", onlyThisPlayer(() => playRandomVideo()));
+  nodecg.listenFor("ytshuffle.loadplaylist", onlyThisPlayer(({ playlistId }) => {
+    player.stopVideo();
+    player.loadPlaylist({
+      list: playlistId,
+      listType: "playlist"
+    });
+    setTimeout(() => playRandomVideo(), 500);
+  }));
+
+  nodecg.sendMessage("ytshuffle.load", { uid });
+  pingTimer = window.setInterval(ping, PING_INTERVAL);
+}
+
+function setupPlayer(playlistId) {
   player = new YT.Player('player', {
     playerVars: { autoplay: 1, controls: 0 },
     width: urlParams.get('width') || '640',
     height: urlParams.get('height') || '480',
     events: {
+      onStateChange: onPlayerStateChange,
       onReady: (event) => {
         player.loadPlaylist({
           listType: 'playlist',
           list: playlistId,
         });
+        player.setShuffle(true);
       },
-      onStateChange: onPlayerStateChange,
     },
   });
-
-  nodecg.listenFor("ytshuffle.play", ({ uid: messageUid }) => {
-    if (!player || messageUid !== uid) return;
-    player.playVideo();
-  });
-
-  nodecg.listenFor("ytshuffle.pause", ({ uid: messageUid }) => {
-    if (!player || messageUid !== uid) return;
-    player.pauseVideo();
-  });
-
-  nodecg.listenFor("ytshuffle.next", ({ uid: messageUid }) => {
-    if (!player || messageUid !== uid) return;
-    player.nextVideo();
-  });
-
-  nodecg.listenFor("ytshuffle.random", ({ uid: messageUid }) => {
-    if (!player || messageUid !== uid) return;
-    playRandomVideo();
-  });
-
-  nodecg.sendMessage("ytshuffle.load", { uid });
-  pingTimer = window.setInterval(ping, PING_INTERVAL);
 }
 
 function playRandomVideo() {
@@ -75,6 +76,10 @@ function ping() {
 }
 
 function unload() {
+  if (pingTimer) {
+    cancelInterval(pingTimer);
+    pingTimer = null;
+  }
   nodecg.sendMessage("ytshuffle.unload", { uid });
 }
 
@@ -109,7 +114,7 @@ function onPlayerStateChange(event) {
           document.getElementById("caption").textContent = title;
           nodecg.sendMessageToBundle('twitch.chat.say', 'twitch-connect', {
             message: `Now playing: ${title} ${videoUrl}`
-          });  
+          });
         }
       }
     }

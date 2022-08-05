@@ -11,9 +11,10 @@ function getOrCreateControl({ uid }) {
   const eid = `player-${uid}`;
   let el = $(`#${eid}`);
   if (!el) {
+    const { youtubeShufflePlaylists = {} } = nodecg.bundleConfig;
     el = Object.assign(
       createElement('player-control'),
-      { id: eid, uid, lastPing: Date.now() }
+      { id: eid, uid, lastPing: Date.now(), playlistChoices: youtubeShufflePlaylists }
     )
     $("#player-controls").appendChild(el);
   }
@@ -42,6 +43,7 @@ nodecg.listenFor("ytshuffle.ping", (data) => {
   Object.assign(el, {
     lastPing: Date.now(),
     playerInfo: info,
+    playlistId: info.playlistId,
   })
 });
 
@@ -51,6 +53,7 @@ nodecg.listenFor("ytshuffle.update", (data) => {
   Object.assign(el, {
     lastPing: Date.now(),
     playerInfo: info,
+    playlistId: info.playlistId,
     state,
     stateName,
   })
@@ -59,34 +62,64 @@ nodecg.listenFor("ytshuffle.update", (data) => {
 class PlayerControlElement extends BaseElement {
   static template = html`
     <div>
-      <div>
+      <div style="margin: 0.25em 0">
         <button class="play">▶️</button>
         <button class="pause">⏸️</button>
         <button class="next">⏭️</button>
         <button class="shuffle">🔀</button>
-        <span class="playState"></span>
         <span class="uid"></span>
+        <span class="playState"></span>
       </div>
-      <p class="title" style="font-size: 0.8em; margin: 1em 1em;"></p> 
+      <div style="margin: 0.25em 0">
+        <select class="playlists"></select>
+        <button class="loadPlaylist">⬆️</button>
+      </div>
+      <p class="title" style="font-size: 0.8em; margin: 1em 1em;"></p>
     </div>
   `;
 
   static get observedProperties() {
-    return ["uid", "lastPing", "playerInfo", "stateName"];
+    return ["uid", "lastPing", "playerInfo", "stateName", "playlistId", "playlistChoices"];
   }
 
   connectedCallback() {
+    const self = this;
     const { uid } = this;
     this.updateElements({
       ".play": { ">click": () => nodecg.sendMessage("ytshuffle.play", { uid }) },
       ".pause": { ">click": () => nodecg.sendMessage("ytshuffle.pause", { uid }) },
       ".next": { ">click": () => nodecg.sendMessage("ytshuffle.next", { uid }) },
       ".shuffle": { ">click": () => nodecg.sendMessage("ytshuffle.random", { uid }) },
+      ".loadPlaylist": {
+        ">click": () => {
+          const playlistId = self.$(".playlists").value;
+          nodecg.sendMessage("ytshuffle.loadplaylist", { uid, playlistId });
+        }
+      }
+    });
+  }
+
+  propChanged_playlistChoices(newValue) {
+    this.updateElements({
+      ".playlists": {
+        "children": Object
+          .entries(newValue)
+          .map(([playlistId, description]) => createElement("option", {
+            value: playlistId,
+            textContent: description
+          }))
+      },
+    });
+  }
+
+  propChanged_playlistId(newValue) {
+    this.updateElements({
+      ".playlists": { value: newValue }
     });
   }
 
   render() {
-    const { uid, lastPing, playerInfo, stateName } = this.props;
+    const { uid, lastPing, playerInfo, stateName, playlistChoices } = this.props;
     const title = playerInfo && playerInfo.videoData && playerInfo.videoData.title;
 
     const playStateIcon = {
@@ -97,14 +130,14 @@ class PlayerControlElement extends BaseElement {
       "buffering": "💭",
       "cued": "🤔",
     };
-        
 
     this.updateElements({
       ".uid": uid,
       ".lastPing": lastPing,
-      ".playState": playStateIcon[stateName] || "❓",
-      ".title": title
+      ".playState": playStateIcon[stateName] || stateName,
+      ".title": title,
     });
   }
 }
+
 customElements.define("player-control", PlayerControlElement);
