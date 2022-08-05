@@ -12,6 +12,17 @@
       margin: 0;
       padding: 0;
     }
+    #caption {
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: rgba(0, 255, 255, 0.75);
+      font-family: "Ubuntu Mono";
+      font-size: 20px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px black;
+      padding: 2.5em;
+    }
   </style>
   <script type="module">
     import(
@@ -23,6 +34,7 @@
 
 <body>
   <div id="player"></div>
+  <div id="caption"></div>
   <script>
     var tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
@@ -30,12 +42,8 @@
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     function onYouTubeIframeAPIReady() {
       window.main();
-      window.addEventListener("pagehide", (event) => {
-        console.log("UNLOAD");
-        window.unload();
-      });
+      window.addEventListener("pagehide", (event) => window.unload());
     }
-
   </script>
 </body>
 

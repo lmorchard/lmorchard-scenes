@@ -106,6 +106,7 @@ function onPlayerStateChange(event) {
         const { videoData, videoUrl } = info;
         if (videoData) {
           const { title } = videoData;
+          document.getElementById("caption").textContent = title;
           nodecg.sendMessageToBundle('twitch.chat.say', 'twitch-connect', {
             message: `Now playing: ${title} ${videoUrl}`
           });  
