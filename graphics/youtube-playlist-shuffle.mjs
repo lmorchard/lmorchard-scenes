@@ -8,11 +8,12 @@ var uid;
 
 var pingTimer;
 
-function main() {
-  uid = genuid();
+const PING_INTERVAL = 5000;
 
+function main() {
   urlParams = new URLSearchParams(window.location.search);
   playlistId = urlParams.get('list') || 'PLDUwhtLxLHMBrQgt3S56GDCtwEbZ57RBe';
+  uid = urlParams.get("uid") || genuid();
 
   player = new YT.Player('player', {
     playerVars: { autoplay: 1, controls: 0 },
@@ -29,28 +30,28 @@ function main() {
     },
   });
 
-  nodecg.listenFor("videoPlay", ({ uid: messageUid }) => {
+  nodecg.listenFor("ytshuffle.play", ({ uid: messageUid }) => {
     if (!player || messageUid !== uid) return;
     player.playVideo();
   });
 
-  nodecg.listenFor("videoPause", ({ uid: messageUid }) => {
+  nodecg.listenFor("ytshuffle.pause", ({ uid: messageUid }) => {
     if (!player || messageUid !== uid) return;
     player.pauseVideo();
   });
 
-  nodecg.listenFor("videoNext", ({ uid: messageUid }) => {
+  nodecg.listenFor("ytshuffle.next", ({ uid: messageUid }) => {
     if (!player || messageUid !== uid) return;
     player.nextVideo();
   });
 
-  nodecg.listenFor("videoRandom", ({ uid: messageUid }) => {
+  nodecg.listenFor("ytshuffle.random", ({ uid: messageUid }) => {
     if (!player || messageUid !== uid) return;
     playRandomVideo();
   });
 
-  nodecg.sendMessage("load", { uid });
-  pingTimer = window.setInterval(ping, 1000);
+  nodecg.sendMessage("ytshuffle.load", { uid });
+  pingTimer = window.setInterval(ping, PING_INTERVAL);
 }
 
 function playRandomVideo() {
@@ -70,23 +71,11 @@ function getPlayerInfo() {
 }
 
 function ping() {
-  nodecg.sendMessage("ping", { uid, info: getPlayerInfo() });
+  nodecg.sendMessage("ytshuffle.ping", { uid, info: getPlayerInfo() });
 }
 
 function unload() {
-  nodecg.sendMessage("unload", { uid });
-}
-
-var oldNumber = 0;
-var NewNumber = 0;
-function newRandomNumber() {
-  oldNumber = NewNumber;
-  NewNumber = Math.floor(Math.random() * maxNumber);
-  if (NewNumber == oldNumber) {
-    newRandomNumber();
-  } else {
-    return NewNumber;
-  }
+  nodecg.sendMessage("ytshuffle.unload", { uid });
 }
 
 var firstLoad = true;
@@ -103,7 +92,7 @@ const playState = {
 function onPlayerStateChange(event) {
   const stateName = playState["" + event.data];
   const info = getPlayerInfo();
-  nodecg.sendMessage("update", { uid, state: event.data, stateName, info });
+  nodecg.sendMessage("ytshuffle.update", { uid, state: event.data, stateName, info });
 
   if (event.data == YT.PlayerState.ENDED) {
     player.playVideoAt(newRandomNumber());
@@ -113,10 +102,28 @@ function onPlayerStateChange(event) {
       playRandomVideo();
     }
     if (event.data == YT.PlayerState.PLAYING) {
-      nodecg.sendMessageToBundle('twitch.chat.say', 'twitch-connect', {
-        message: `Now playing: ${info.videoData.title}`
-      });
+      if (info) {
+        const { videoData, videoUrl } = info;
+        if (videoData) {
+          const { title } = videoData;
+          nodecg.sendMessageToBundle('twitch.chat.say', 'twitch-connect', {
+            message: `Now playing: ${title} ${videoUrl}`
+          });  
+        }
+      }
     }
+  }
+}
+
+var oldNumber = 0;
+var NewNumber = 0;
+function newRandomNumber() {
+  oldNumber = NewNumber;
+  NewNumber = Math.floor(Math.random() * maxNumber);
+  if (NewNumber == oldNumber) {
+    newRandomNumber();
+  } else {
+    return NewNumber;
   }
 }
 

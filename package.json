@@ -21,6 +21,12 @@
   },
   "nodecg": {
     "compatibleRange": "^1.1.1",
+    "mount": [
+      {
+        "directory": "web_modules",
+        "endpoint": "web_modules"
+      }
+    ],
     "dashboardPanels": [
       {
         "name": "youtube-playlist-shuffle",
