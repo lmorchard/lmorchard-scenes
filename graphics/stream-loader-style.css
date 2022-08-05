@@ -1,0 +1,96 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  border: 0;
+  overflow: hidden;
+  display: block;
+  background: #50459b;
+  color: #ffffff;
+}
+
+@font-face {
+    /**
+     * http://style64.org/c64-truetype
+     * see license.txt in font directory for details.
+     */
+    font-family: "C64 User Mono";
+    src: url("font/C64_User_Mono_v1.0-STYLE.eot");
+}
+
+@font-face {
+    /**
+     * http://style64.org/c64-truetype
+     * see license.txt in font directory for details.
+     */
+    font-family: "C64 User Mono";
+    src: url("font/C64_User_Mono_v1.0-STYLE.ttf") format("truetype"), url("font/C64_User_Mono_v1.0-STYLE.woff") format("woff");
+}
+
+.c64 {
+ /* generic "use this font" class */
+ font-family: "C64 User Mono";
+}
+
+h1 {
+  margin: 0;
+  font-size: 2em;
+}
+h2 {
+  margin: 0;
+  font-size: 1.5em;
+}
+h3 {
+  margin: 0;
+  font-size: 1.0em;
+}
+
+#timer {
+  text-shadow: #000 4px 4px;
+}
+
+canvas#main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+section.layer {
+  z-index: 500;
+  
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 1.5em;
+  
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-content: center;
+}
+
+section.layer img {
+  opacity: 0.9;
+  margin: auto;
+  display: block;
+}
+
+section#content {
+  z-index: 500;
+}
+
+section#backdrop {
+  z-index: 0;
+}
+
+#statusMessageSection, #timer { display: none; }
+.timer #statusMessageSection, .timer #timer { display: block; }
+
+#endMessageSection { display: none; }
+.end #endMessageSection { display: block; }

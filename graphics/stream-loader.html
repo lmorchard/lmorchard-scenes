@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>NOW LOADING!</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./stream-loader-style.css" />
+    <script src="./stream-loader-script.js" defer></script>
+    <script type="module">
+      import(
+        '/bundles/file-watcher/public/file-watcher.mjs'
+      ).then(({ default: reload }) => reload(nodecg));
+    </script>
+  </head>
+  <body class="c64 timer">
+    <canvas id="main"></canvas>
+    <section id="backdrop" class="layer"></section>
+    <section id="content" class="layer">
+      <h1 id="title">Now loading...</h1>
+      <img width="320" height="200" src="./face-8bit-2.png" />
+      <h2 id="timer">00:00:00</h2>
+      <section id="statusMessageSection">
+        <p>Current status:</p>
+        <p><span id="statusMessage">Please wait</span></p>
+      </section>
+      <section id="endMessageSection">
+        <h2 id="endMessage">Thanks for coming!</h2>
+      </section>
+    </section>
+  </body>
+</html>

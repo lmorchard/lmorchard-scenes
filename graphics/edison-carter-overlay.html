@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hello!</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu+Mono" />
+  <style type="text/css">
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script type="module">
+    import(
+      '/bundles/file-watcher/public/file-watcher.mjs'
+    ).then(({ default: reload }) => reload(nodecg));
+  </script>
+</head>
+
+<body>
+  <!-- did you know you can stick svg straight in html? I didn't! -->
+  <svg version="1.1" baseprofile="full" width="1280" height="720" xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g class="channelInfo" transform="translate(1465, 30)"></g>
+
+    <g class="mainStroke" opacity="0.8" fill="transparent" stroke-width="2">
+      <rect width="1280" height="720" />
+      <g>
+        <use xlink:href="#ruler" transform="translate(495, 180)" />
+        <use xlink:href="#meter" />
+        <g>
+          <use xlink:href="#vidCorner" />
+          <use xlink:href="#vidCorner" transform="translate(960, 0) rotate(90)" />
+          <use xlink:href="#vidCorner" transform="translate(960, 720) rotate(180)" />
+          <use xlink:href="#vidCorner" transform="translate(0, 720) rotate(270)" />
+        </g>
+      </g>
+      <g transform="translate(960, 0)">
+        <use xlink:href="#vidOverlay" />
+        <text class="camName">Cam 2</text>
+        <text class="camNameSub">CPE-1704-TKS</text>
+      </g>
+      <g transform="translate(960, 240)">
+        <use xlink:href="#vidOverlay" />
+        <text class="camName">AV 1</text>
+        <text class="camNameSub">0242/0242</text>
+      </g>
+      <g transform="translate(960, 480)">
+        <use xlink:href="#vidOverlay" />
+        <text class="camName">@lmorchard</text>
+        <text class="camNameSub">867-5309</text>
+      </g>
+    </g>
+
+    <defs>
+      <path id="vidCorner" d="M20 50 V 40 C 20 20, 20 20, 40 20 H 50" />
+
+      <g id="vidReticule" opacity="0.5">
+        <circle class="mainFill" cx="0" cy="0" r="45" opacity="0.2" />
+        <g stroke-width="2">
+          <line x1="0" y1="-10" x2="0" y2="-30" />
+          <line x1="0" y1="-10" x2="0" y2="-30" transform="rotate(90)" />
+          <line x1="0" y1="-10" x2="0" y2="-30" transform="rotate(180)" />
+          <line x1="0" y1="-10" x2="0" y2="-30" transform="rotate(270)" />
+        </g>
+      </g>
+
+      <g id="live" class="live">
+        <rect x="0" y="0" width="34" height="15" />
+        <text x="5" y="11">LIVE</text>
+        <animate id="animation1" attributeName="opacity" from="0" to="0.8" dur="1.5s" begin="0s;animation2.end" />
+        <animate id="animation2" attributeName="opacity" from="0.8" to="0" dur="1.5s" begin="animation1.end" />
+      </g>
+
+      <g id="vidOverlay" class="vidOverlay">
+        <rect x="0" y="0" width="320" height="240" />
+        <use xlink:href="#live" transform="translate(260, 195)" />
+        <use xlink:href="#ruler" />
+        <!--<use xlink:href="#meter" />-->
+        <!--
+        <g class="networkId" transform="translate(410, 55)">
+          <circle class="altStroke" cx="0" cy="0" r="20" opacity="1.0" />
+          <text class="altStroke" x="-12" y="6">23</text>
+        </g>
+        -->
+        <rect class="camNameBG" x="0" y="175" width="232" height="24" opacity="0.3" fill="rgba(0, 255, 255, 1.0)" />
+        <g>
+          <use xlink:href="#vidCorner" />
+          <use xlink:href="#vidCorner" transform="translate(320, 0) rotate(90)" />
+          <use xlink:href="#vidCorner" transform="translate(320, 240) rotate(180)" />
+          <use xlink:href="#vidCorner" transform="translate(0, 240) rotate(270)" />
+        </g>
+        <use xlink:href="#vidReticule" transform="translate(160, 120)" />
+      </g>
+
+      <g id="monitorOverlay" class="vidOverlay">
+        <rect x="0" y="0" width="320" height="240" />
+        <!-- <use xlink:href="#live" transform="translate(0, 0)" /> -->
+        <use xlink:href="#ruler" />
+        <g>
+          <rect class="meterFrame" x="70" y="20" width="80" height="10" />
+          <rect class="meter1" x="90" y="20" width="20" height="10" />
+          <rect class="meter2" x="110" y="20" width="20" height="10" />
+          <rect class="meter3" x="130" y="20" width="20" height="10" />
+        </g>
+        <g>
+          <use xlink:href="#vidCorner" />
+          <use xlink:href="#vidCorner" transform="translate(320, 0) rotate(90)" />
+          <use xlink:href="#vidCorner" transform="translate(320, 240) rotate(180)" />
+          <use xlink:href="#vidCorner" transform="translate(0, 240) rotate(270)" />
+        </g>
+      </g>
+
+      <g id="ruler" class="ruler">
+        <line x1="445" y1="150" x2="445" y2="210" />
+        <line x1="445" y1="180" x2="435" y2="180" />
+
+        <line x1="445" y1="155" x2="440" y2="155" />
+        <line x1="445" y1="160" x2="440" y2="160" />
+        <line x1="445" y1="165" x2="438" y2="165" />
+        <line x1="445" y1="170" x2="440" y2="170" />
+        <line x1="445" y1="175" x2="440" y2="175" />
+
+        <line x1="445" y1="185" x2="440" y2="185" />
+        <line x1="445" y1="190" x2="440" y2="190" />
+        <line x1="445" y1="195" x2="438" y2="195" />
+        <line x1="445" y1="200" x2="440" y2="200" />
+        <line x1="445" y1="205" x2="440" y2="205" />
+      </g>
+
+      <g id="meter">
+        <rect class="meterFrame" x="70" y="20" width="80" height="10" />
+        <rect class="meter1" x="90" y="20" width="20" height="10" />
+        <rect class="meter2" x="110" y="20" width="20" height="10" />
+        <rect class="meter3" x="130" y="20" width="20" height="10" />
+      </g>
+    </defs>
+
+    <style>
+      /* <![CDATA[ */
+      text {
+        font: 24px 'Ubuntu Mono';
+        stroke: transparent;
+        fill: rgba(0, 255, 255, 1);
+      }
+
+      .channelInfo text {
+        fill: rgba(255, 255, 255, 1);
+      }
+
+      .mainStroke {
+        fill: transparent;
+        stroke: rgba(0, 255, 255, 1);
+      }
+
+      .altStroke {
+        fill: transparent;
+        stroke: rgba(255, 0, 0, 1);
+      }
+
+      .mainFill {
+        fill: rgba(0, 255, 255, 1);
+        stroke: transparent;
+      }
+
+      .ruler {
+        stroke: rgba(255, 0, 0, 1);
+      }
+
+      .live {
+        stroke: rgba(255, 0, 0, 1);
+      }
+
+      .live text {
+        text-transform: uppercase;
+        font-weight: bold;
+        stroke: rgba(255, 0, 0, 1);
+        font-size: 12px;
+      }
+
+      .networkId text {
+        text-transform: uppercase;
+        stroke: rgba(255, 0, 0, 1);
+        font-size: 23px;
+      }
+
+      .mainDisplay {
+        opacity: 0.7;
+      }
+
+      .vidOverlay {
+        opacity: 0.7;
+      }
+
+      .camName {
+        font-weight: bold;
+        text-transform: uppercase;
+        transform: translate(30px, 195px);
+      }
+
+      .camNameSub {
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transform: translate(30px, 210px);
+      }
+
+      .meter1 {
+        stroke: transparent;
+        fill: rgba(0, 255, 255, 0.3);
+      }
+
+      .meter2 {
+        stroke: transparent;
+        fill: rgba(0, 255, 255, 0.6);
+      }
+
+      .meter3 {
+        stroke: transparent;
+        fill: rgba(0, 255, 255, 1);
+      }
+
+      /* ]]> */
+    </style>
+  </svg>
+</body>
+
+</html>

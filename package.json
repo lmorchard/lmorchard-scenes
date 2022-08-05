@@ -1,0 +1,56 @@
+{
+  "name": "lmorchard-scenes",
+  "version": "0.0.0",
+  "description": "",
+  "homepage": "",
+  "author": {
+    "name": "Les Orchard",
+    "email": "me@lmorchard.com",
+    "url": ""
+  },
+  "files": [
+    "graphics"
+  ],
+  "keywords": [
+    "",
+    "nodecg-bundle"
+  ],
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "nodecg": {
+    "compatibleRange": "^1.1.1",
+    "dashboardPanels": [
+      {
+        "name": "youtube-playlist-shuffle",
+        "title": "YT Playlist Shuffle",
+        "width": 2,
+        "file": "youtube-playlist-shuffle.html",
+        "headerColor": "#525F78"
+      }
+    ],
+    "graphics": [
+      {
+        "file": "stream-loader.html",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "file": "youtube-playlist-shuffle.html",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "file": "edison-carter-overlay.html",
+        "width": 1280,
+        "height": 720
+      }
+    ]
+  },
+  "repository": "https://github.com/nodecg/nodecg.git",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "prettier": "^2.0.5"
+  }
+}
