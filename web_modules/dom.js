@@ -73,15 +73,12 @@ export function html(strings, ...values) {
 export class BaseElement extends HTMLElement {
   constructor() {
     super();
-
     const self = this;
-
+    this._renderScheduled = false;
     this._props = {};
     for (let propertyName of this.constructor.observedProperties) {
       this.constructor.defineObservedProperty(self, propertyName);
     }
-
-    this._renderScheduled = false;
     this.attachShadow({ mode: "open" }).appendChild(
       this.template().content.cloneNode(true)
     );

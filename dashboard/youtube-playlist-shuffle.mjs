@@ -106,7 +106,8 @@ class PlayerControlElement extends BaseElement {
           .entries(newValue)
           .map(([playlistId, description]) => createElement("option", {
             value: playlistId,
-            textContent: description
+            textContent: description,
+            selected: playlistId === this.playlistId,
           }))
       },
     });
